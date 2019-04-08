@@ -35,16 +35,14 @@ public struct SecureRandom {
     /// - Returns: The random generated data.
     /// - Throws: `SecureRandomError` if any error occurs during generation of secure random bytes. 
     public static func generate(count: Int) throws -> Data {
-        var generatedRandom = Data(count: count)
-
-        let randomGenerationStatus = generatedRandom.withUnsafeMutableBytes { mutableRandomBytes in
-            SecRandomCopyBytes(kSecRandomDefault, count, mutableRandomBytes)
-        }
+        //var generatedRandom = Data(count: count)
+		var generatedRandom = [UInt8](repeating: 0, count: count)
+        let randomGenerationStatus = SecRandomCopyBytes(kSecRandomDefault, count, &generatedRandom)
 
         guard randomGenerationStatus == errSecSuccess else {
             throw SecureRandomError.failed(status: randomGenerationStatus)
         }
 
-        return generatedRandom
+        return Data(generatedRandom)
     }
 }
